@@ -54,7 +54,7 @@ key easy-rsa/keys/server.key
 dh easy-rsa/keys/dh2048.pem
 tls-auth easy-rsa/keys/ta.key 0
 
-server 10.8.0.0 255.255.255.0
+server 10.7.0.0 255.255.255.0
 duplicate-cn
 
 push "route $RANCHER_NETWORK_CIDR $RANCHER_NETWORK_MASK"
