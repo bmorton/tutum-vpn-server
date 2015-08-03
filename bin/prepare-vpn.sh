@@ -28,8 +28,8 @@ if [ ! -d $VPN_PATH/easy-rsa ]; then
 fi
 
 # Update openvpn route
-TUTUM_NETWORK_CIDR=`ip addr show dev eth0 | grep "inet " | awk '{print $2}' | xargs -i ipcalc -n {} | grep Network | awk '{print $2}' | awk -F/ '{print $1}'`
-TUTUM_NETWORK_MASK=`ip addr show dev eth0 | grep "inet " | awk '{print $2}' | xargs -i ipcalc -n {} | grep Netmask | awk '{print $2}'`
+TUTUM_NETWORK_CIDR=`ip addr show dev ethwe | grep "inet " | awk '{print $2}' | xargs -i ipcalc -n {} | grep Network | awk '{print $2}' | awk -F/ '{print $1}'`
+TUTUM_NETWORK_MASK=`ip addr show dev ethwe | grep "inet " | awk '{print $2}' | xargs -i ipcalc -n {} | grep Netmask | awk '{print $2}'`
 
 # Create OpenVPN server config
 cat > $VPN_PATH/server.conf <<EOF
@@ -54,8 +54,7 @@ key easy-rsa/keys/server.key
 dh easy-rsa/keys/dh2048.pem
 tls-auth easy-rsa/keys/ta.key 0
 
-server 10.7.0.0 255.255.0.0
-duplicate-cn
+server 10.8.0.0 255.255.255.0
 
 push "route $TUTUM_NETWORK_CIDR $TUTUM_NETWORK_MASK"
 EOF
@@ -63,4 +62,4 @@ EOF
 # Enable tcp forwarding and add iptables MASQUERADE rule
 echo 1 > /proc/sys/net/ipv4/ip_forward
 iptables -t nat -F
-iptables -t nat -A POSTROUTING -s 10.7.0.0/16 -j MASQUERADE
+iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -j MASQUERADE
