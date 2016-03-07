@@ -4,7 +4,7 @@
 
 set -e
 
-if [ ! -d $VPN_PATH/easy-rsa ]; then
+if [ ! -d $VPN_PATH/easy-rsa/keys ]; then
    # Copy easy-rsa tools to /etc/openvpn
    rsync -avz /usr/share/easy-rsa $VPN_PATH/
 
@@ -60,6 +60,5 @@ push "route $TUTUM_NETWORK_CIDR $TUTUM_NETWORK_MASK"
 EOF
 
 # Enable tcp forwarding and add iptables MASQUERADE rule
-echo 1 > /proc/sys/net/ipv4/ip_forward
 iptables -t nat -F
 iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -j MASQUERADE
