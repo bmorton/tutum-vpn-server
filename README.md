@@ -1,1 +1,1 @@
-# rancher-vpn
+# Docker Cloud OpenVPN server

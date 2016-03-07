@@ -16,11 +16,11 @@ OVPN_SERVERS=`echo ${VPN_SERVERS} | sed "s/^/remote /g" | sed "s/,$//g" | sed "s
 
 # Extract ca.crt
 CA_CRT=`cat $VPN_PATH/easy-rsa/keys/ca.crt`
-CLIENT_CRT=`cat $VPN_PATH/easy-rsa/keys/RancherVPNClient.crt`
-CLIENT_KEY=`cat $VPN_PATH/easy-rsa/keys/RancherVPNClient.key`
+CLIENT_CRT=`cat $VPN_PATH/easy-rsa/keys/docker_cloud_vpn_client.crt`
+CLIENT_KEY=`cat $VPN_PATH/easy-rsa/keys/docker_cloud_vpn_client.key`
 TA_KEY=`cat $VPN_PATH/easy-rsa/keys/ta.key`
 
-cat > $VPN_PATH/RancherVPNClient.ovpn <<EOF
+cat > $VPN_PATH/docker_cloud_vpn_client.ovpn <<EOF
 $OVPN_SERVERS
 remote-random
 client
@@ -58,5 +58,5 @@ $TA_KEY
 </tls-auth>
 EOF
 
-chmod 600 $VPN_PATH/RancherVPNClient.ovpn
-cat $VPN_PATH/RancherVPNClient.ovpn
+chmod 600 $VPN_PATH/docker_cloud_vpn_client.ovpn
+cat $VPN_PATH/docker_cloud_vpn_client.ovpn

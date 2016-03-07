@@ -22,7 +22,7 @@ if [ ! -d $VPN_PATH/easy-rsa/keys ]; then
    ./build-ca --batch
    ./build-key-server --batch server
    ./build-dh
-   ./build-key --batch RancherVPNClient
+   ./build-key --batch docker_cloud_vpn_client
    openvpn --genkey --secret keys/ta.key
    popd
 fi
