@@ -7,10 +7,7 @@ VPN_PATH=/etc/openvpn
 # Extract remote nodes
 VPN_SERVERS="$1"
 if [ "${VPN_SERVERS}" == "**ChangeMe**" ] || [ -z ${VPN_SERVERS} ]; then
-   echo "ERROR: You did not specify VPN Servers to connect to, please enter VPN Servers as an argument."
-   echo "You may specify more than one server separated by a comma, for example: $0 X.X.X.X:1194,Y.Y.Y.Y:1194"
-   echo "Exiting..."
-   exit 1
+  VPN_SERVERS=${DOCKERCLOUD_SERVICE_FQDN}:1194
 fi
 OVPN_SERVERS=`echo ${VPN_SERVERS} | sed "s/^/remote /g" | sed "s/,$//g" | sed "s/,/\nremote /g" | sed "s/:/ /g"`
 

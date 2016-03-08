@@ -58,6 +58,8 @@ tls-auth easy-rsa/keys/ta.key 0
 server 10.8.0.0 255.255.255.0
 
 push "route $TUTUM_NETWORK_CIDR $TUTUM_NETWORK_MASK"
+push "dhcp-option DOMAIN $DOCKER_CLOUD_SEARCH_DOMAIN"
+push "domain $DOCKER_CLOUD_SEARCH_DOMAIN"
 EOF
 
 # Enable tcp forwarding and add iptables MASQUERADE rule

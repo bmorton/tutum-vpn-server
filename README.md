@@ -6,7 +6,7 @@
 docker-cloud service run -n vpn-server -p 2222:2222 -p 1194:1194 -e DEBUG=1 --privileged \
   --link-service myservice:myservice \
   bmorton/vpn-server
-``
+```
 
 ## Retrieve the OpenVPN client configuration
 
