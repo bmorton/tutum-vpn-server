@@ -2,7 +2,7 @@
 
 [ "$DEBUG" == "1" ] && set -x
 
-while ! $( ifconfig -s | grep ethwe ); do
+while ! ifconfig -s | grep "ethwe"; do
   echo "Waiting for ethwe..."
   sleep 1
 done
