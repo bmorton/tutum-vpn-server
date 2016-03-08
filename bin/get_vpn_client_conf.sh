@@ -31,7 +31,7 @@ nobind
 comp-lzo
 
 ;user nobody
-;group nogroup 
+;group nogroup
 
 ;log-append  /var/log/openvpn.log
 verb 3

@@ -30,6 +30,7 @@ fi
 # Update openvpn route
 TUTUM_NETWORK_CIDR=`ip addr show dev ethwe | grep "inet " | awk '{print $2}' | xargs -i ipcalc -n {} | grep Network | awk '{print $2}' | awk -F/ '{print $1}'`
 TUTUM_NETWORK_MASK=`ip addr show dev ethwe | grep "inet " | awk '{print $2}' | xargs -i ipcalc -n {} | grep Netmask | awk '{print $2}'`
+DOCKER_CLOUD_SEARCH_DOMAIN=`grep search /etc/resolv.conf | cut -d" " -f2`
 
 # Create OpenVPN server config
 cat > $VPN_PATH/server.conf <<EOF
