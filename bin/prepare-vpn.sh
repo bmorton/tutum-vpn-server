@@ -9,12 +9,12 @@ if [ ! -d $VPN_PATH/easy-rsa/keys ]; then
    rsync -avz /usr/share/easy-rsa $VPN_PATH/
 
    # Configure easy-rsa vars file
-   perl -p -i -e "s/export KEY_COUNTRY=.*/export KEY_COUNTRY=\"CA\"/g" $VPN_PATH/easy-rsa/vars
-   perl -p -i -e "s/export KEY_PROVINCE=.*/export KEY_PROVINCE=\"BARCELONA\"/g" $VPN_PATH/easy-rsa/vars
-   perl -p -i -e "s/export KEY_CITY=.*/export KEY_CITY=\"CASTELLDEFELS\"/g" $VPN_PATH/easy-rsa/vars
-   perl -p -i -e "s/export KEY_ORG=.*/export KEY_ORG=\"NIXEL\"/g" $VPN_PATH/easy-rsa/vars
-   perl -p -i -e "s/export KEY_EMAIL=.*/export KEY_EMAIL=\"manel\@nixelsolutions.com\"/g" $VPN_PATH/easy-rsa/vars
-   perl -p -i -e "s/export KEY_OU=.*/export KEY_OU=\"NIXEL\"/g" $VPN_PATH/easy-rsa/vars
+   perl -p -i -e "s/export KEY_COUNTRY=.*/export KEY_COUNTRY=\"US\"/g" $VPN_PATH/easy-rsa/vars
+   perl -p -i -e "s/export KEY_PROVINCE=.*/export KEY_PROVINCE=\"CALIFORNIA\"/g" $VPN_PATH/easy-rsa/vars
+   perl -p -i -e "s/export KEY_CITY=.*/export KEY_CITY=\"OAKLAND\"/g" $VPN_PATH/easy-rsa/vars
+   perl -p -i -e "s/export KEY_ORG=.*/export KEY_ORG=\"mmmhm\"/g" $VPN_PATH/easy-rsa/vars
+   perl -p -i -e "s/export KEY_EMAIL=.*/export KEY_EMAIL=\"brian\@mmm.hm\"/g" $VPN_PATH/easy-rsa/vars
+   perl -p -i -e "s/export KEY_OU=.*/export KEY_OU=\"mmmhm\"/g" $VPN_PATH/easy-rsa/vars
 
    pushd $VPN_PATH/easy-rsa
    . ./vars
@@ -28,9 +28,26 @@ if [ ! -d $VPN_PATH/easy-rsa/keys ]; then
 fi
 
 # Update openvpn route
-TUTUM_NETWORK_CIDR=`ip addr show dev ethwe | grep "inet " | awk '{print $2}' | xargs -i ipcalc -n {} | grep Network | awk '{print $2}' | awk -F/ '{print $1}'`
-TUTUM_NETWORK_MASK=`ip addr show dev ethwe | grep "inet " | awk '{print $2}' | xargs -i ipcalc -n {} | grep Netmask | awk '{print $2}'`
+DOCKER_CLOUD_NETWORK_CIDR=`ip addr show dev ethwe | grep "inet " | awk '{print $2}' | xargs -i ipcalc -n {} | grep Network | awk '{print $2}' | awk -F/ '{print $1}'`
+DOCKER_CLOUD_NETWORK_MASK=`ip addr show dev ethwe | grep "inet " | awk '{print $2}' | xargs -i ipcalc -n {} | grep Netmask | awk '{print $2}'`
 DOCKER_CLOUD_SEARCH_DOMAIN=`grep search /etc/resolv.conf | cut -d" " -f2`
+
+# Create LDAP auth config
+cat > $VPN_PATH/ldap.conf <<EOF
+<LDAP>
+URL             "$LDAP_SERVER"
+BindDN          "$LDAP_BIND_DN"
+Password        "$LDAP_BIND_PASSWORD"
+TLSCACertDir    /etc/ssl/certs
+Timeout         15
+</LDAP>
+
+<Authorization>
+BaseDN          "$LDAP_BASE_DN"
+SearchFilter    "$LDAP_SEARCH_FILTER"
+RequireGroup    false
+</Authorization>
+EOF
 
 # Create OpenVPN server config
 cat > $VPN_PATH/server.conf <<EOF
@@ -43,7 +60,6 @@ comp-lzo
 user nobody
 group nogroup
 
-log-append /var/log/openvpn.log
 verb 3
 
 persist-key
@@ -57,9 +73,12 @@ tls-auth easy-rsa/keys/ta.key 0
 
 server 10.8.0.0 255.255.255.0
 
-push "route $TUTUM_NETWORK_CIDR $TUTUM_NETWORK_MASK"
+push "route $DOCKER_CLOUD_NETWORK_CIDR $DOCKER_CLOUD_NETWORK_MASK"
 push "dhcp-option DOMAIN $DOCKER_CLOUD_SEARCH_DOMAIN"
 push "domain $DOCKER_CLOUD_SEARCH_DOMAIN"
+
+plugin /usr/lib/openvpn/openvpn-auth-ldap.so $VPN_PATH/ldap.conf
+client-cert-not-required
 EOF
 
 # Enable tcp forwarding and add iptables MASQUERADE rule
