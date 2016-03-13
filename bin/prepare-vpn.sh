@@ -35,16 +35,16 @@ DOCKER_CLOUD_SEARCH_DOMAIN=`grep search /etc/resolv.conf | cut -d" " -f2`
 # Create LDAP auth config
 cat > $VPN_PATH/ldap.conf <<EOF
 <LDAP>
-URL             "$LDAP_SERVER"
+URL             "$LDAP_URL"
 BindDN          "$LDAP_BIND_DN"
-Password        "$LDAP_BIND_PASSWORD"
+Password        "$LDAP_PASSWORD"
 TLSCACertDir    /etc/ssl/certs
 Timeout         15
 </LDAP>
 
 <Authorization>
-BaseDN          "$LDAP_BASE_DN"
-SearchFilter    "$LDAP_SEARCH_FILTER"
+BaseDN          "$LDAP_AUTHORIZATION_BASE_DN"
+SearchFilter    "$LDAP_AUTHORIZATION_SEARCH_FILTER"
 RequireGroup    false
 </Authorization>
 EOF
